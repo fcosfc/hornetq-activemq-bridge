@@ -1,0 +1,9 @@
+connect
+
+jms-queue add --queue-address=Test.In --entries=java:/hornetq/Test/In
+jms-queue add --queue-address=Test.Out --entries=java:/hornetq/Test/Out
+
+/subsystem=messaging/hornetq-server=default/connection-factory=XAConnectionFactory:add \
+    (connector={"in-vm"=>undefined}, \
+     entries = ["java:/XAConnectionFactory"], \
+     factory-type="XA_GENERIC")

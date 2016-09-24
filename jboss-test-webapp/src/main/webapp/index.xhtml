@@ -1,0 +1,111 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <title>#{label.title}</title>
+    </h:head>
+
+    <h:body> 
+        <p:growl id="growl" life="10000" widgetVar="growl" /> 
+        
+        <p:socket onMessage="handleMessage" channel="/messagereceived">
+            <p:ajax listener="#{messagingController.refreshReceivedMessages()}" update=":receivedMessages:receivedMessagesDataTable"/>
+        </p:socket>
+
+        <p:socket onMessage="handleMessage" channel="/messagessent">
+            <p:ajax listener="#{messagingController.refreshSentMessages()}" update=":sentMessages:sentMessagesDataTable"/>
+        </p:socket>
+        
+        <script type="text/javascript">
+            function handleMessage(facesmessage) {
+                PF('growl').show([facesmessage]);
+            }
+        </script>
+        
+        <p:layout fullPage="true">
+
+            <p:layoutUnit position="north" header="#{label.title}"/>
+            
+            <p:layoutUnit position="west" header="#{label.receivedMessages}" resizable="true" size="400">
+                <h:form id="receivedMessages">
+                    <h:panelGroup>
+                        <p:panelGrid columns="3" style=" border: none;">
+                            <h:outputLabel for="numLastReceivedMessages" value="#{label.numOfLastMessagesToRefresh}" />
+                            <p:spinner id="numLastReceivedMessages" value="#{messagingController.numLastReceivedMessages}" min="5" max="50" size="2" required="true" immediate="true" />
+                            <p:commandButton icon="ui-icon-refresh" value="#{label.refresh}" actionListener="#{messagingController.refreshReceivedMessages()}" update="receivedMessagesDataTable,:growl"/>
+                        </p:panelGrid>
+                    </h:panelGroup>
+                    <br/>
+                    <p:dataTable id="receivedMessagesDataTable"
+                                 value="#{messagingController.lastReceivedMessages}"
+                                 var="receivedListItem">
+
+                        <p:column headerText="#{label.timeReceived}" >
+                            <h:outputText value="#{receivedListItem.dateInOut}">
+                                <f:convertDateTime pattern="HH:mm:ss.SSSSSS"/>
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column headerText="#{label.messageContent}">
+                            <h:outputText value="#{receivedListItem.content}"/>                            
+                        </p:column>
+
+                    </p:dataTable>
+                </h:form> 
+            </p:layoutUnit>
+
+            <p:layoutUnit position="center" header="#{label.sentMessages}" resizable="true">
+                <h:form id="sentMessages">
+                    <h:panelGroup>
+                        <p:panelGrid columns="6" style=" border: none;">
+                            <h:outputLabel for="numLastSentMessages" value="#{label.numOfLastMessagesToRefresh}" />
+                            <p:spinner id="numLastSentMessages" value="#{messagingController.numLastSentMessages}" min="5" max="50" size="2" required="true" />
+                            <p:commandButton icon="ui-icon-refresh" value="#{label.refresh}" actionListener="#{messagingController.refreshSentMessages()}" update="sentMessagesDataTable,:growl"/>
+
+                            <h:outputLabel for="numMessagesToSend" value="#{label.numOfMessagesToSend}" />
+                            <p:spinner id="numMessagesToSend" value="#{messagingController.numMessagesToSend}" min="5" max="50" size="2" required="true" />
+                            <p:commandButton icon="ui-icon-comment" value="#{label.send}" actionListener="#{messagingController.sendSomeTestMessages()}" update="sentMessagesDataTable,:growl"/>
+                        </p:panelGrid>
+                    </h:panelGroup>
+                    <br/>
+                    <p:dataTable id="sentMessagesDataTable"
+                                 value="#{messagingController.lastSentMessages}"
+                                 var="sentListItem">
+
+                        <p:column headerText="#{label.timeSent}" >
+                            <h:outputText value="#{sentListItem.dateInOut}">
+                                <f:convertDateTime pattern="HH:mm:ss.SSSSSS"/>
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column headerText="#{label.messageContent}">
+                            <h:outputText value="#{sentListItem.content}"/>                            
+                        </p:column>
+
+                    </p:dataTable>
+                </h:form> 
+            </p:layoutUnit>
+
+            <p:layoutUnit position="south" size="50">
+                <div style="display: block; text-align: center;">
+                    <h:outputText value="&copy; Paco Saucedo"/>
+                    <p:ajaxStatus style="float: right" id="ajaxStatusPanel">  
+                        <f:facet name="start">  
+                            <h:graphicImage library="images" name="ajaxloading.gif" style="height: 25px; width: 25px; padding-right: 5px" />  
+                        </f:facet>  
+
+                        <f:facet name="complete">  
+                            <h:outputText value="" />  
+                        </f:facet>  
+                    </p:ajaxStatus>
+                </div>
+            </p:layoutUnit>
+
+        </p:layout>
+
+    </h:body>
+</html>

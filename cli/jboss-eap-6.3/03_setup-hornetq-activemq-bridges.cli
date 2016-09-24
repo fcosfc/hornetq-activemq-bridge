@@ -1,0 +1,25 @@
+connect
+ 
+/subsystem=messaging/jms-bridge=test-activemq-hornetq:add \
+    (quality-of-service="ONCE_AND_ONLY_ONCE",\
+     client-id="hornetq",\
+     subscription-name="hornetq",\
+     failure-retry-interval=60000,\
+     max-batch-size=1,\
+     max-batch-time=10000,\
+     max-retries=100,\
+     source-connection-factory="AMQXAConnectionFactory",\
+     source-destination="activemq/Test/Out",\
+     target-connection-factory="XAConnectionFactory",\
+     target-destination="hornetq/Test/In")
+
+/subsystem=messaging/jms-bridge=test-hornetq-activemq:add \
+    (quality-of-service="ONCE_AND_ONLY_ONCE",\
+     failure-retry-interval=60000,\
+     max-batch-size=1,\
+     max-batch-time=10000,\
+     max-retries=100,\
+     source-connection-factory="XAConnectionFactory",\
+     source-destination="hornetq/Test/Out",\
+     target-connection-factory="AMQXAConnectionFactory",\
+     target-destination="activemq/Test/In")
