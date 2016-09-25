@@ -7,3 +7,5 @@ The project servicemix-test-bundle has two routes: the first one publishes messa
 On the other hand, you have some CLI scripts that set up the bridge connections, deploying an ActiveMQ resource adapter on JBoss EAP 6.3 and creating the bridge connections, by publishing on a HornetQ queue the messages read by a durable consumer of the ServiceMix topic and transfering to ActiveMQ the messages written on a HornetQ queue by a test application.
 
 The code of this Java EE 6 test application is in the project jboss-test-webapp, which allows you to see the received messages (generated in ServiceMix) and to send test messages.
+
+See: https://fcosfc.wordpress.com/2016/09/25/my-experiences-about-a-jms-interchange-between-hornetq-and-activemq-over-apache-servicemix/
